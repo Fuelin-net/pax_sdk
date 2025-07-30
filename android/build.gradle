@@ -1,0 +1,78 @@
+group 'com.example.pax_sdk_package'
+version '1.0'
+
+buildscript {
+    ext.kotlin_version = '1.7.10'
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.3.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    namespace = "com.example.pax_sdk_package"
+    compileSdkVersion 33
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 33
+        
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['src/main/jniLibs']
+            jni.srcDirs = []
+        }
+    }
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging true
+        }
+        pickFirst '**/libc++_shared.so'
+        pickFirst '**/libDeviceConfig.so'
+        pickFirst '**/libpaxcanvas.so'
+        pickFirst '**/libHDSD.so'
+        pickFirst '**/libZBarDecoder.so'
+        pickFirst '**/libdecoder_jni.so'
+        pickFirst '**/libiconv.so'
+        pickFirst '**/libIGLBarDecoder.so'
+    }
+}
+
+dependencies {
+    implementation files('libs/neptune-lite-api-v3.26.00-20210903.jar')
+    implementation files('libs/sdk.jar')
+}
