@@ -1,7 +1,0 @@
-com.example.pax_sdk_package-pngs-0 /Users/moaaz/Desktop/Projects/Rased/pax_sdk_package/android/build/generated/res/pngs/release
-com.example.pax_sdk_package-resValues-1 /Users/moaaz/Desktop/Projects/Rased/pax_sdk_package/android/build/generated/res/resValues/release
-com.example.pax_sdk_package-mergeReleaseResources-2 /Users/moaaz/Desktop/Projects/Rased/pax_sdk_package/android/build/intermediates/incremental/release/mergeReleaseResources/merged.dir
-com.example.pax_sdk_package-mergeReleaseResources-3 /Users/moaaz/Desktop/Projects/Rased/pax_sdk_package/android/build/intermediates/incremental/release/mergeReleaseResources/stripped.dir
-com.example.pax_sdk_package-merged_res-4 /Users/moaaz/Desktop/Projects/Rased/pax_sdk_package/android/build/intermediates/merged_res/release
-com.example.pax_sdk_package-main-5 /Users/moaaz/Desktop/Projects/Rased/pax_sdk_package/android/src/main/res
-com.example.pax_sdk_package-release-6 /Users/moaaz/Desktop/Projects/Rased/pax_sdk_package/android/src/release/res
