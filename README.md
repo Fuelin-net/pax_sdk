@@ -113,6 +113,11 @@ await PaxSdk.cutPaper(mode: 0);
 - PAX payment terminal device
 - PAX SDK libraries (included in the package)
 
+## Tested on
+
+- **PAX A920 Pro**
+- **PAX A960**
+
 ## Permissions
 
 The following permissions are automatically added to your Android app:
@@ -201,3 +206,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Repository
+
+This package is available on GitHub: [https://github.com/Fuelin-net/pax_sdk](https://github.com/Fuelin-net/pax_sdk)
