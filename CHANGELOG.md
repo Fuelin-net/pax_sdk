@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.2] - 2024-01-XX
+
+### Added
+- **JAR Files**: PAX SDK JAR files are now properly included in the package distribution
+  - `neptune-lite-api-v3.26.00-20210903.jar` (604KB) - Main PAX Neptune Lite API
+  - `sdk.jar` (102KB) - PAX SDK core library
+- **Package Distribution**: JAR files are now tracked in version control and included in package releases
+- **Improved Installation**: Users can now install the package with all required PAX SDK dependencies
+
+### Technical
+- Removed JAR files from `.gitignore` to ensure they are included in package distribution
+- Updated package structure to include essential PAX SDK libraries
+- Enhanced package validation and distribution process
+
 ## [1.0.1] - 2024-01-XX
 
 ### Added
