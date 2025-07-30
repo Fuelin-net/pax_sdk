@@ -49,15 +49,13 @@ app.*.map.json
 /example/android/app/profile
 /example/android/app/release
 
-# PAX SDK specific
-/android/app/libs/
-/android/libs/
-*.jar
-*.so
-*.dex
-
-# Keep only essential PAX files
+# PAX SDK specific - Allow essential files, ignore build artifacts
+/android/app/libs/*.jar
 !/android/app/libs/neptune-lite-api-v3.26.00-20210903.jar
 !/android/app/libs/sdk.jar
 !/android/libs/neptune-lite-api-v3.26.00-20210903.jar
 !/android/libs/sdk.jar
+
+# Ignore native libraries that are large and should be distributed separately
+*.so
+*.dex
