@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1] - 2024-01-XX
+
+### Added
+- Support for PAX A920 Pro and PAX A960 devices
+- Improved error handling for device compatibility
+- Enhanced documentation with tested devices list
+
 ## [1.0.0] - 2024-01-XX
 
 ### Added
