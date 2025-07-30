@@ -50,7 +50,9 @@ app.*.map.json
 /example/android/app/release
 
 # Ignore native libraries that are large and should be distributed separately
-*.so
+# *.so
+# Allow .so files to be tracked
+!*.so
 *.dex
 
 # Android build artifacts

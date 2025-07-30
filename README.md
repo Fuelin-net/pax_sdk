@@ -15,7 +15,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  pax_sdk: ^1.0.0
+  pax_sdk: ^1.0.3
 ```
 
 ## Usage
