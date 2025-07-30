@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.0.3] - 2025-07-30
+
+### Fixed
+- **Android Compilation Issues**: Resolved all Java compilation errors in the Android plugin
+  - Fixed missing Flutter SDK dependencies in Android build configuration
+  - Added proper Flutter embedding dependencies from local Flutter installation
+  - Resolved `@NonNull` annotation import issues
+  - Fixed Java version compatibility (upgraded to Java 17)
+- **Build System**: Updated Android Gradle configuration for proper plugin compilation
+  - Added Flutter SDK path configuration in gradle.properties
+  - Configured Java 17 for Android Gradle plugin compatibility
+  - Added AndroidX annotation dependencies
+  - Suppressed compileSdk warnings for better build experience
+
+### Technical
+- Updated `android/build.gradle` with proper Flutter SDK dependencies
+- Updated `android/gradle.properties` with Java 17 and Flutter SDK paths
+- Enhanced build configuration for better compatibility with modern Flutter versions
+- Improved plugin registration and method channel handling
+
+### Testing
+- ✅ Android library builds successfully without compilation errors
+- ✅ Example app builds and runs successfully on PAX A920 Pro device
+- ✅ Flutter plugin classes properly resolved and accessible
+- ✅ All method channels and plugin interfaces working correctly
+
 ## [1.0.2] - 2024-01-XX
 
 ### Added

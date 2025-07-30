@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.1.0" type="incidents">
+
+    <incident
+        id="DefaultLocale"
+        severity="warning"
+        message="Implicitly using the default locale is a common source of bugs: Use `toLowerCase(Locale)` instead. For strings meant to be internal use `Locale.ROOT`, otherwise `Locale.getDefault()`.">
+        <location
+            file="${:*debug*sourceProvider*0*javaDir*0}/com/example/pax_sdk_package/paxSDK.java"
+            line="693"
+            column="30"
+            startOffset="25922"
+            endLine="693"
+            endColumn="41"
+            endOffset="25933"/>
+    </incident>
+
+    <incident
+        id="DefaultLocale"
+        severity="warning"
+        message="Implicitly using the default locale is a common source of bugs: Use `toLowerCase(Locale)` instead. For strings meant to be internal use `Locale.ROOT`, otherwise `Locale.getDefault()`.">
+        <location
+            file="${:*debug*sourceProvider*0*javaDir*0}/com/example/pax_sdk_package/paxSDK.java"
+            line="1620"
+            column="37"
+            startOffset="59915"
+            endLine="1620"
+            endColumn="48"
+            endOffset="59926"/>
+    </incident>
+
+    <incident
+        id="OldTargetApi"
+        severity="warning"
+        message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details.">
+        <fix-replace
+            description="Update targetSdkVersion to 35"
+            oldString="33"
+            replacement="35"/>
+        <location
+            file="${:*projectDir}/build.gradle"
+            line="46"
+            column="9"
+            startOffset="881"
+            endLine="46"
+            endColumn="28"
+            endOffset="900"/>
+    </incident>
+
+    <incident
+        id="AndroidGradlePluginVersion"
+        severity="warning"
+        message="A newer version of com.android.tools.build:gradle than 7.3.0 is available: 8.11.1. (There is also a newer version of 7.3.𝑥 available, if upgrading to 8.11.1 is difficult: 7.3.1)">
+        <fix-alternatives>
+            <fix-replace
+                description="Change to 8.11.1"
+                family="Update versions"
+                oldString="7.3.0"
+                replacement="8.11.1"/>
+            <fix-replace
+                description="Change to 7.3.1"
+                family="Update versions"
+                robot="true"
+                independent="true"
+                oldString="7.3.0"
+                replacement="7.3.1"/>
+        </fix-alternatives>
+        <location
+            file="${:*projectDir}/build.gradle"
+            line="12"
+            column="9"
+            startOffset="192"
+            endLine="12"
+            endColumn="57"
+            endOffset="240"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.annotation:annotation than 1.5.0 is available: 1.9.1">
+        <fix-replace
+            description="Change to 1.9.1"
+            family="Update versions"
+            oldString="1.5.0"
+            replacement="1.9.1"/>
+        <location
+            file="${:*projectDir}/build.gradle"
+            line="80"
+            column="20"
+            startOffset="1716"
+            endLine="80"
+            endColumn="58"
+            endOffset="1754"/>
+    </incident>
+
+</incidents>

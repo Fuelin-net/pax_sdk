@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.1.0" type="conditional_incidents">
+
+    <incident
+        id="QueryPermissionsNeeded"
+        severity="warning"
+        message="As of Android 11, this method no longer returns information about all apps; \&#xA;see https://g.co/dev/packagevisibility for details">
+        <location
+            file="${:*debug*sourceProvider*0*javaDir*0}/com/example/pax_sdk_package/paxSDK.java"
+            line="69"
+            column="45"
+            startOffset="2300"
+            endLine="69"
+            endColumn="65"
+            endOffset="2320"/>
+        <map>
+            <entry
+                name="queryAll"
+                boolean="true"/>
+        </map>
+    </incident>
+
+</incidents>

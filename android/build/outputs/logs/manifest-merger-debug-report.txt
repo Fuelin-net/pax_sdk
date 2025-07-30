@@ -1,0 +1,16 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/moaaz/Desktop/Projects/Rased/pax_sdk_package/android/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest715849374503196171.xml:2:13-83
+INJECTED from /Users/moaaz/Desktop/Projects/Rased/pax_sdk_package/android/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest715849374503196171.xml:2:13-83
+	package
+		INJECTED from /Users/moaaz/Desktop/Projects/Rased/pax_sdk_package/android/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest715849374503196171.xml
+	xmlns:android
+		ADDED from /Users/moaaz/Desktop/Projects/Rased/pax_sdk_package/android/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest715849374503196171.xml:2:23-81
+uses-sdk
+INJECTED from /Users/moaaz/Desktop/Projects/Rased/pax_sdk_package/android/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest715849374503196171.xml reason: use-sdk injection requested
+INJECTED from /Users/moaaz/Desktop/Projects/Rased/pax_sdk_package/android/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest715849374503196171.xml
+INJECTED from /Users/moaaz/Desktop/Projects/Rased/pax_sdk_package/android/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest715849374503196171.xml
+	android:targetSdkVersion
+		INJECTED from /Users/moaaz/Desktop/Projects/Rased/pax_sdk_package/android/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest715849374503196171.xml
+	android:minSdkVersion
+		INJECTED from /Users/moaaz/Desktop/Projects/Rased/pax_sdk_package/android/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest715849374503196171.xml
