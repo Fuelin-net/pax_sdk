@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.0.4] - 2025-01-XX
+
+### Fixed
+- **Android Build Compatibility**: Resolved Flutter SDK path dependency issues
+  - Removed hardcoded Flutter SDK paths that caused build failures
+  - Added Flutter Gradle plugin for proper dependency management
+  - Updated Android configuration to use modern Flutter plugin architecture
+  - Fixed settings.gradle configuration for library plugins
+  - Cleaned up gradle.properties to remove hardcoded paths
+
+### Technical
+- Updated `android/build.gradle` to use Flutter Gradle plugin
+- Fixed `android/settings.gradle` for proper library plugin configuration
+- Removed manual Flutter embedding dependencies (now handled automatically)
+- Enhanced package portability across different Flutter installations
+- Improved compatibility with latest Flutter versions
+
+### Breaking Changes
+- None
+
+### Migration
+- No migration required - this is a bug fix release
+
 ## [1.0.3] - 2025-07-30
 
 ### Fixed
