@@ -82,6 +82,7 @@ android {
 dependencies {
     implementation files('libs/neptune-lite-api-v3.26.00-20210903.jar')
     implementation files('libs/sdk.jar')
+    
 }
 
 flutter {
