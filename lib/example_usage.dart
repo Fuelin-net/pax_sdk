@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'pax_sdk.dart';
 
 /// Example usage of PAX SDK method channels
@@ -306,6 +308,33 @@ class PaxSdkExamples {
     print('\n=== Testing All Detection Modes ===');
     await PaxSdk.tryAllModes();
   }
+
+  /// Example: Barcode scanner
+  static Future<void> scanBarcode() async {
+    print('=== Barcode Scanner Example ===');
+
+    final sub = PaxSdk.onReadSuccess.listen((code) {
+      print('Scanned: $code');
+    });
+
+    final started = await PaxSdk.startScanner(
+      scannerType: 'REAR',
+      timeoutMs: 30000,
+    );
+
+    if (started['success'] != true) {
+      print('Failed to start scanner: ${started['error']}');
+      await sub.cancel();
+      return;
+    }
+
+    print('Scanner started. Press side scan button, or wait for timeout.');
+    // In a real app, keep the subscription until you call stopScanner().
+    await Future.delayed(const Duration(seconds: 30));
+    await PaxSdk.stopScanner();
+    await sub.cancel();
+    print('Scanner stopped');
+  }
 }
 
 /// Usage examples
@@ -321,6 +350,7 @@ void main() async {
   // await PaxSdkExamples.printImageExample();
   // await PaxSdkExamples.testAllPrinterFeatures();
   // await PaxSdkExamples.testAllNfcFeatures();
+  // await PaxSdkExamples.scanBarcode();
 
   print('\nExamples completed!');
 }

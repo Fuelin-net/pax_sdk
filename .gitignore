@@ -160,3 +160,6 @@ node_modules/
 # Keep JAR files (they are part of the plugin)
 !**/android/libs/*.jar
 !**/example/android/libs/*.jar
+
+# FVM Version Cache
+.fvm/

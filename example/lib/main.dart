@@ -177,7 +177,7 @@ class _PaxSdkDemoState extends State<PaxSdkDemo> {
     try {
       // Test native library loading first
       final nativeTest = await PaxSdk.testNativeLibraryLoading();
-      print('Native library test: $nativeTest');
+      debugPrint('Native library test: $nativeTest');
 
       // Initialize printer
       final initialized = await PaxSdk.initializePrinter();
@@ -221,7 +221,7 @@ class _PaxSdkDemoState extends State<PaxSdkDemo> {
 
     try {
       final result = await PaxSdk.testNativeLibraryLoading();
-      print('Native library test result: $result');
+      debugPrint('Native library test result: $result');
 
       setState(() {
         _nfcStatus = result['success']

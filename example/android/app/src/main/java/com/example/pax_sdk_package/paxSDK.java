@@ -5,6 +5,7 @@ import io.flutter.embedding.android.FlutterActivity;
 import androidx.annotation.NonNull;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -13,12 +14,17 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import com.pax.dal.IDAL;
 import com.pax.dal.IPicc;
 import com.pax.dal.IPrinter;
+import com.pax.dal.IScanner;
 import com.pax.dal.entity.PiccCardInfo;
 import com.pax.dal.entity.EDetectMode;
 import com.pax.dal.entity.EFontTypeAscii;
 import com.pax.dal.entity.EFontTypeExtCode;
+import com.pax.dal.entity.EScannerType;
+import com.pax.dal.entity.ScanResult;
 import com.pax.dal.exceptions.PrinterDevException;
 import com.pax.neptunelite.api.NeptuneLiteUser;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.content.Context;
 import com.pax.dal.entity.EPiccType;
@@ -41,19 +47,26 @@ import java.util.Map;
 import java.util.List;
 
 /**
- * paxSDK - PAX NFC and Printer functionality integration
+ * paxSDK - PAX NFC, Printer, and Scanner functionality integration
  */
-public class paxSDK implements FlutterPlugin, MethodCallHandler {
+public class paxSDK implements FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler {
     private MethodChannel channel;
+    private EventChannel scannerEventChannel;
+    private EventChannel.EventSink scannerEventSink;
     public static Context appContext;
     private static final String TAG = "PAX_SDK";
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private IPrinter printer;
     private IDAL dal;
+    private IScanner scanner;
+    private boolean scannerRunning = false;
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
         channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "pax_sdk");
         channel.setMethodCallHandler(this);
+        scannerEventChannel = new EventChannel(flutterPluginBinding.getBinaryMessenger(), "pax_sdk/scanner");
+        scannerEventChannel.setStreamHandler(this);
         appContext = flutterPluginBinding.getApplicationContext();
     }
 
@@ -2035,6 +2048,174 @@ public class paxSDK implements FlutterPlugin, MethodCallHandler {
         }
     }
 
+    // ============ SCANNER METHODS ============
+
+    private EScannerType resolveScannerType(String type) {
+        if (type == null || type.isEmpty()) {
+            return EScannerType.REAR;
+        }
+        switch (type.trim().toUpperCase()) {
+            case "FRONT":
+                return EScannerType.FRONT;
+            case "LEFT":
+                return EScannerType.LEFT;
+            case "RIGHT":
+                return EScannerType.RIGHT;
+            case "EXTERNAL":
+                return EScannerType.EXTERNAL;
+            case "REAR":
+            default:
+                return EScannerType.REAR;
+        }
+    }
+
+    private void emitScannerEvent(Map<String, Object> event) {
+        mainHandler.post(() -> {
+            if (scannerEventSink != null) {
+                scannerEventSink.success(event);
+            }
+        });
+    }
+
+    private Map<String, Object> startScanner(String scannerType, Integer timeoutMs) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            if (appContext == null) {
+                result.put("success", false);
+                result.put("error", "Context is null - cannot initialize PAX SDK");
+                return result;
+            }
+
+            if (scannerRunning && scanner != null) {
+                try {
+                    scanner.stop();
+                } catch (Exception ignored) {
+                }
+                try {
+                    scanner.close();
+                } catch (Exception ignored) {
+                }
+                scanner = null;
+                scannerRunning = false;
+            }
+
+            dal = NeptuneLiteUser.getInstance().getDal(appContext);
+            if (dal == null) {
+                result.put("success", false);
+                result.put("error", "Failed to get DAL instance");
+                return result;
+            }
+
+            EScannerType type = resolveScannerType(scannerType);
+            scanner = dal.getScanner(type);
+            if (scanner == null) {
+                result.put("success", false);
+                result.put("error", "Failed to get scanner instance for type: " + type.name());
+                return result;
+            }
+
+            if (timeoutMs != null && timeoutMs > 0) {
+                scanner.setTimeOut(timeoutMs);
+            }
+
+            boolean opened = scanner.open();
+            if (!opened) {
+                result.put("success", false);
+                result.put("error", "Failed to open scanner");
+                scanner = null;
+                return result;
+            }
+
+            scanner.start(new IScanner.IScanListener() {
+                @Override
+                public void onRead(ScanResult scanResult) {
+                    Map<String, Object> event = new HashMap<>();
+                    event.put("event", "onRead");
+                    event.put("content", scanResult != null ? scanResult.getContent() : null);
+                    event.put("format", scanResult != null ? scanResult.getFormat() : null);
+                    emitScannerEvent(event);
+                }
+
+                @Override
+                public void onFinish() {
+                    Map<String, Object> event = new HashMap<>();
+                    event.put("event", "onFinish");
+                    emitScannerEvent(event);
+                }
+
+                @Override
+                public void onCancel() {
+                    Map<String, Object> event = new HashMap<>();
+                    event.put("event", "onCancel");
+                    emitScannerEvent(event);
+                }
+            });
+
+            scannerRunning = true;
+            result.put("success", true);
+            result.put("scannerType", type.name());
+            Log.d(TAG, "Scanner started with type: " + type.name());
+            return result;
+        } catch (UnsatisfiedLinkError e) {
+            Log.e(TAG, "UnsatisfiedLinkError starting scanner: " + e.getMessage());
+            result.put("success", false);
+            result.put("error", "Missing native libraries: " + e.getMessage());
+            return result;
+        } catch (Exception e) {
+            Log.e(TAG, "Error starting scanner: ", e);
+            result.put("success", false);
+            result.put("error", e.getMessage());
+            return result;
+        }
+    }
+
+    private Map<String, Object> stopScanner() {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            if (scanner == null) {
+                result.put("success", true);
+                result.put("message", "Scanner already stopped");
+                scannerRunning = false;
+                return result;
+            }
+
+            try {
+                scanner.stop();
+            } catch (Exception e) {
+                Log.w(TAG, "scanner.stop() failed: " + e.getMessage());
+            }
+
+            try {
+                scanner.close();
+            } catch (Exception e) {
+                Log.w(TAG, "scanner.close() failed: " + e.getMessage());
+            }
+
+            scanner = null;
+            scannerRunning = false;
+            result.put("success", true);
+            Log.d(TAG, "Scanner stopped");
+            return result;
+        } catch (Exception e) {
+            Log.e(TAG, "Error stopping scanner: ", e);
+            scanner = null;
+            scannerRunning = false;
+            result.put("success", false);
+            result.put("error", e.getMessage());
+            return result;
+        }
+    }
+
+    @Override
+    public void onListen(Object arguments, EventChannel.EventSink events) {
+        scannerEventSink = events;
+    }
+
+    @Override
+    public void onCancel(Object arguments) {
+        scannerEventSink = null;
+    }
+
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         switch (call.method) {
@@ -2278,6 +2459,19 @@ public class paxSDK implements FlutterPlugin, MethodCallHandler {
                 Map<String, Object> nativeTestResult = testNativeLibraryLoading();
                 result.success(nativeTestResult);
                 break;
+
+            // ===== SCANNER METHODS =====
+            case "startScanner":
+                String scannerType = call.argument("scannerType");
+                Integer scannerTimeout = call.argument("timeoutMs");
+                Map<String, Object> startScannerResult = startScanner(scannerType, scannerTimeout);
+                result.success(startScannerResult);
+                break;
+
+            case "stopScanner":
+                Map<String, Object> stopScannerResult = stopScanner();
+                result.success(stopScannerResult);
+                break;
                 
             default:
                 result.notImplemented();
@@ -2287,6 +2481,11 @@ public class paxSDK implements FlutterPlugin, MethodCallHandler {
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+        stopScanner();
         channel.setMethodCallHandler(null);
+        if (scannerEventChannel != null) {
+            scannerEventChannel.setStreamHandler(null);
+        }
+        scannerEventSink = null;
     }
 }

@@ -1,0 +1,6 @@
+# Keep a Changelog repeats ### Added / ### Fixed under each version.
+MD024:
+  siblings_only: true
+
+# Technical docs: long paths, code, and API names exceed 80 cols.
+MD013: false

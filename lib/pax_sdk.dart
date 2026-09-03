@@ -1,7 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class PaxSdk {
   static const MethodChannel _channel = MethodChannel('pax_sdk');
+  static const EventChannel _scannerChannel = EventChannel('pax_sdk/scanner');
+
+  /// Clears cached scanner stream so tests can re-bind EventChannel mocks.
+  @visibleForTesting
+  static void resetForTest() {
+    _scanResultsStream = null;
+  }
 
   // ============ NFC METHODS ============
 
@@ -30,10 +38,10 @@ class PaxSdk {
       final result = await _channel.invokeMethod('checkCardPresence');
       return result as bool;
     } on PlatformException catch (e) {
-      print('Platform error checking card presence: ${e.message}');
+      debugPrint('Platform error checking card presence: ${e.message}');
       return false;
     } catch (e) {
-      print('Error checking card presence: $e');
+      debugPrint('Error checking card presence: $e');
       return false;
     }
   }
@@ -70,10 +78,10 @@ class PaxSdk {
       final result = await _channel.invokeMethod('initializePrinter');
       return result as bool;
     } on PlatformException catch (e) {
-      print('Platform error initializing printer: ${e.message}');
+      debugPrint('Platform error initializing printer: ${e.message}');
       return false;
     } catch (e) {
-      print('Error initializing printer: $e');
+      debugPrint('Error initializing printer: $e');
       return false;
     }
   }
@@ -195,10 +203,10 @@ class PaxSdk {
       final result = await _channel.invokeMethod('isCutSupported');
       return result as bool;
     } on PlatformException catch (e) {
-      print('Platform error checking cut support: ${e.message}');
+      debugPrint('Platform error checking cut support: ${e.message}');
       return false;
     } catch (e) {
-      print('Error checking cut support: $e');
+      debugPrint('Error checking cut support: $e');
       return false;
     }
   }
@@ -608,6 +616,77 @@ class PaxSdk {
       final result = await _channel.invokeMethod('setAlignMode', {
         'alignMode': alignMode,
       });
+      return Map<String, dynamic>.from(result);
+    } on PlatformException catch (e) {
+      return {
+        'success': false,
+        'error': 'Platform error: ${e.message}',
+        'code': e.code,
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'error': 'Unexpected error: $e',
+      };
+    }
+  }
+
+  // ============ SCANNER METHODS ============
+
+  static Stream<Map<String, dynamic>>? _scanResultsStream;
+
+  /// Stream of scanner events from hardware [IScanner] callbacks.
+  ///
+  /// Events:
+  /// - `{event: 'onRead', content: String?, format: String?}` on decode success
+  /// - `{event: 'onFinish'}` when scan session finishes
+  /// - `{event: 'onCancel'}` when scan is cancelled
+  static Stream<Map<String, dynamic>> get scanResults {
+    return _scanResultsStream ??= _scannerChannel
+        .receiveBroadcastStream()
+        .map((event) => Map<String, dynamic>.from(event as Map))
+        .asBroadcastStream();
+  }
+
+  /// Convenience stream of decoded barcode/QR strings (`onRead` content only).
+  static Stream<String> get onReadSuccess {
+    return scanResults
+        .where((e) => e['event'] == 'onRead' && e['content'] != null)
+        .map((e) => e['content'] as String);
+  }
+
+  /// Open scanner, register hardware trigger listener, and begin scan session.
+  ///
+  /// [scannerType]: `FRONT`, `REAR` (default), `LEFT`, `RIGHT`, or `EXTERNAL`.
+  /// [timeoutMs]: optional scan timeout in milliseconds.
+  static Future<Map<String, dynamic>> startScanner({
+    String scannerType = 'REAR',
+    int? timeoutMs,
+  }) async {
+    try {
+      final result = await _channel.invokeMethod('startScanner', {
+        'scannerType': scannerType,
+        'timeoutMs': ?timeoutMs,
+      });
+      return Map<String, dynamic>.from(result);
+    } on PlatformException catch (e) {
+      return {
+        'success': false,
+        'error': 'Platform error: ${e.message}',
+        'code': e.code,
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'error': 'Unexpected error: $e',
+      };
+    }
+  }
+
+  /// Stop active scan session and close scanner.
+  static Future<Map<String, dynamic>> stopScanner() async {
+    try {
+      final result = await _channel.invokeMethod('stopScanner');
       return Map<String, dynamic>.from(result);
     } on PlatformException catch (e) {
       return {

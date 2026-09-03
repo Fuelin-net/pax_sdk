@@ -1,12 +1,13 @@
 # PAX SDK Flutter Plugin
 
-A Flutter plugin for PAX payment terminals providing NFC card reading and thermal printer functionality.
+A Flutter plugin for PAX payment terminals providing NFC card reading, thermal printer, and barcode scanner functionality.
 
 ## Features
 
 - **NFC Card Reading**: Detect and read NFC cards on PAX devices
 - **Thermal Printing**: Print text and images with various formatting options
 - **Advanced Printer Controls**: Font size, alignment, spacing, and more
+- **Barcode Scanner**: Hardware laser/camera scanner via Neptune Lite `IScanner`
 - **Release Build Support**: Works properly with `flutter run --release`
 
 ## Installation
@@ -15,7 +16,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  pax_sdk: ^1.0.3
+  pax_sdk: ^1.0.5
 ```
 
 ## Usage
@@ -79,6 +80,32 @@ await PaxSdk.setSpacing(wordSpace: 2, lineSpace: 4);
 await PaxSdk.cutPaper(mode: 0);
 ```
 
+### Barcode Scanner
+
+```dart
+// Listen for decoded barcodes (onRead success)
+final sub = PaxSdk.onReadSuccess.listen((code) {
+  print('Scanned: $code');
+});
+
+// Or listen to all scanner events (onRead / onFinish / onCancel)
+final eventsSub = PaxSdk.scanResults.listen((event) {
+  print(event); // {event: onRead, content: '...', format: '...'}
+});
+
+// Activate scanner (enables hardware side-button trigger)
+final started = await PaxSdk.startScanner(
+  scannerType: 'REAR', // FRONT | REAR | LEFT | RIGHT | EXTERNAL
+  timeoutMs: 30000,
+);
+
+// Cancel active scan session
+await PaxSdk.stopScanner();
+
+await sub.cancel();
+await eventsSub.cancel();
+```
+
 ## API Reference
 
 ### NFC Methods
@@ -107,6 +134,13 @@ await PaxSdk.cutPaper(mode: 0);
 - `setInvert(isInvert)` - Set invert printing
 - `presetCutPaper(mode)` - Preset cut paper mode
 
+### Scanner Methods
+
+- `startScanner({scannerType, timeoutMs})` - Open scanner and start listen session
+- `stopScanner()` - Stop scan session and close scanner
+- `onReadSuccess` - `Stream<String>` of decoded content
+- `scanResults` - `Stream<Map>` of raw scanner events
+
 ## Requirements
 
 - Android API level 21 or higher
@@ -125,6 +159,7 @@ The following permissions are automatically added to your Android app:
 ```xml
 <uses-permission android:name="com.pax.permission.PICC" />
 <uses-permission android:name="com.pax.permission.PRINTER" />
+<uses-permission android:name="com.pax.permission.SCANNER" />
 ```
 
 ## Example

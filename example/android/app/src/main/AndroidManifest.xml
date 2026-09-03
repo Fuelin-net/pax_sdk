@@ -2,6 +2,7 @@
     <!-- PAX SDK Permissions -->
     <uses-permission android:name="com.pax.permission.PICC" />
     <uses-permission android:name="com.pax.permission.PRINTER" />
+    <uses-permission android:name="com.pax.permission.SCANNER" />
     
     <application
         android:label="pax_sdk_package"
