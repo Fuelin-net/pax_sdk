@@ -2,6 +2,18 @@
 
 Flutter plugin for PAX payment terminals (Android). Neptune Lite API: NFC (PICC), thermal printer, barcode scanner (`IScanner`).
 
+Keep `AGENTS.md` and `CLAUDE.md` in sync.
+
+## CI/CD lives elsewhere
+
+Do **not** add Helm, Jenkins, GitLab CI, or deploy Dockerfiles in this repo.
+
+Rased backend/dashboard Helm and deploy images live in:
+
+`/Users/moaaz/Desktop/Projects/ci-cd-rased`
+
+This package has **no Helm slice** there (plugin, not a deployed service). Used by Partner App / PAX app. Do not invent K8s/Helm here.
+
 ## Tooling
 
 - Always use **FVM**: `fvm flutter …` / `fvm dart …`
