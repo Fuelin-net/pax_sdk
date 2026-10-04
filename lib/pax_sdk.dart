@@ -666,7 +666,7 @@ class PaxSdk {
     try {
       final result = await _channel.invokeMethod('startScanner', {
         'scannerType': scannerType,
-        if (timeoutMs != null) 'timeoutMs': timeoutMs,
+        'timeoutMs': ?timeoutMs,
       });
       return Map<String, dynamic>.from(result);
     } on PlatformException catch (e) {
